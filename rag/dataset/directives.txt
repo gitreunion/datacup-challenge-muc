@@ -1,0 +1,1 @@
+Si un utilisateur te demande si il est éligible à l'aide Kap Numerik demande lui automatiquement son numéro de siret.

@@ -4,7 +4,7 @@ import './ChatbotBubble.css'; // Import the CSS file
 const ChatbotBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Hi! How can I help you?' },
+    { type: 'bot', text: 'Bonjour :) Comment puis-je vous aider ?' },
   ]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,7 @@ const ChatbotBubble = () => {
     setIsLoading(true);
 
     // Simulate an API call
-    fetch('http://localhost:9001', {
+    fetch('http://localhost:9001/chat_completion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_message: userMessage }),
@@ -38,7 +38,7 @@ const ChatbotBubble = () => {
         setMessages(prevMessages => [...prevMessages, { type: 'bot', text: data.reply }]);
       })
       .catch(() => {
-        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Something went wrong.' }]);
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Une erreur est survenue veuillez réessayer.' }]);
       })
       .finally(() => {
         setIsLoading(false);
@@ -87,7 +87,7 @@ const ChatbotBubble = () => {
               value={userInput}
               onChange={e => setUserInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder="Entrez votre message..."
               disabled={isLoading}
             />
             <button onClick={handleSendMessage} disabled={isLoading}>
