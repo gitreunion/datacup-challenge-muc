@@ -1,0 +1,5 @@
+
+haystack
+datasets
+sentence-transformers
+faiss-cpu

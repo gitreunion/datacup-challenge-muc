@@ -8,13 +8,19 @@ import os
 from getpass import getpass
 from haystack.components.generators import OpenAIGenerator
 from haystack import Pipeline
+import glob
+from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 
 document_store = InMemoryDocumentStore()
 
-dataset = load_dataset("bilgeyucel/seven-wonders", split="train")
-docs = [Document(content=doc["content"], meta=doc["meta"]) for doc in dataset]
+dataset_path = "dataset/*.txt"
+files = glob.glob(dataset_path)
+docs = []
+for file in files:
+    with open(file, 'r', encoding='utf-8') as f:
+        content = f.read()
+        docs.append(Document(content=content, meta={"source": file}))
 
-from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 
 doc_embedder = SentenceTransformersDocumentEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 doc_embedder.warm_up()
@@ -56,18 +62,8 @@ basic_rag_pipeline.connect("text_embedder.embedding", "retriever.query_embedding
 basic_rag_pipeline.connect("retriever", "prompt_builder.documents")
 basic_rag_pipeline.connect("prompt_builder", "llm")
 
-question = "What is the Rhodes Statue ?"
+question = "Qui est arthur mazeau?"
 
 response = basic_rag_pipeline.run({"text_embedder": {"text": question}, "prompt_builder": {"question": question}})
 
 print(response["llm"]["replies"][0])
-
-examples = [
-    "Where is Gardens of Babylon?",
-    "Why did people build Great Pyramid of Giza?",
-    "What does Rhodes Statue look like?",
-    "Why did people visit the Temple of Artemis?",
-    "What is the importance of Colossus of Rhodes?",
-    "What happened to the Tomb of Mausolus?",
-    "How did Colossus of Rhodes collapse?",
-]
