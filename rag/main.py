@@ -11,6 +11,16 @@ from haystack import Pipeline
 import glob
 from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 
+chat_history = []
+
+def enrich_query_with_history(query, history):
+    """Combine l'historique de chat avec la nouvelle requête."""
+    if not history:
+        return query
+    history_text = " ".join([f"Q: {q} A: {a}" for q, a in history])
+    return f"{history_text} Nouvelle question: {query}"
+
+
 document_store = InMemoryDocumentStore()
 
 dataset_path = "dataset/*.txt"
@@ -62,8 +72,15 @@ basic_rag_pipeline.connect("text_embedder.embedding", "retriever.query_embedding
 basic_rag_pipeline.connect("retriever", "prompt_builder.documents")
 basic_rag_pipeline.connect("prompt_builder", "llm")
 
-question = "Qui est arthur mazeau?"
+while True:
+    user_query = input("Votre question : ")
 
-response = basic_rag_pipeline.run({"text_embedder": {"text": question}, "prompt_builder": {"question": question}})
+    
 
-print(response["llm"]["replies"][0])
+    enriched_query = enrich_query_with_history(user_query, chat_history)
+
+    response = basic_rag_pipeline.run({"text_embedder": {"text": enriched_query}, "prompt_builder": {"question": enriched_query}})
+
+    print(response["llm"]["replies"][0])
+
+    chat_history.append((user_query, response["llm"]["replies"][0]))
