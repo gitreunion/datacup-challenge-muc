@@ -1,82 +1,99 @@
-import React, { useState } from 'react';
-import ChatBot from 'react-simple-chatbot';
-import { ThemeProvider } from 'styled-components';
-import axios from 'axios';
+import React, { useState, useEffect, useRef } from 'react';
 import './ChatbotBubble.css'; // Import the CSS file
 
 const ChatbotBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { type: 'bot', text: 'Hi! How can I help you?' },
+  ]);
+  const [userInput, setUserInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
-  const toggleChatbot = () => {
+  const toggleChat = () => {
     setIsOpen(!isOpen);
   };
 
-  const theme = {
-    background: '#f5f8fb',
-    fontFamily: 'Helvetica Neue',
-    headerBgColor: '#00b2a9',
-    headerFontColor: '#fff',
-    headerFontSize: '15px',
-    botBubbleColor: '#00b2a9',
-    botFontColor: '#fff',
-    userBubbleColor: '#fff',
-    userFontColor: '#4a4a4a',
-  };
+  const handleSendMessage = () => {
+    if (!userInput.trim()) return;
 
-  const FetchResponse = ({ steps, triggerNextStep }) => {
-    const userMessage = steps['user-input'].value;
-    const [response, setResponse] = React.useState('...'); // Initial state as "..."
-    const [isFetching, setIsFetching] = React.useState(true);
+    const userMessage = userInput.trim();
+    setMessages(prevMessages => [...prevMessages, { type: 'user', text: userMessage }]);
+    setUserInput('');
+    setIsLoading(true);
 
-    React.useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const res = await axios.post('http://your-backend-url/api', {
-            message: userMessage,
-          });
-          setResponse(res.data.reply); // Set the response
-        } catch (error) {
-          setResponse('Sorry, something went wrong.');
-        } finally {
-          setIsFetching(false); // End fetching
+    // Simulate an API call
+    fetch('http://localhost:9001', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_message: userMessage }),
+    })
+      .then(response => {
+        if (response.status === 404 || !response.ok) {
+          throw new Error('API returned 404 or other error');
         }
-      };
-
-      fetchData();
-    }, [userMessage]);
-
-    React.useEffect(() => {
-      if (!isFetching) {
-        triggerNextStep({ value: response });
-      }
-    }, [isFetching, response, triggerNextStep]);
-
-    return <div>{response}</div>; // Show either "..." or the response
+        return response.json();
+      })
+      .then(data => {
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: data.reply }]);
+      })
+      .catch(() => {
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Something went wrong.' }]);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
-  const steps = [
-    { id: '1', message: 'Hello! How can I help you today?', trigger: 'user-input' },
-    { id: 'user-input', user: true, trigger: 'fetch-response' },
-    { id: 'fetch-response', component: <FetchResponse />, asMessage: true, trigger: 'user-input' },
-  ];
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const renderMessages = () =>
+    messages.map((message, index) => (
+      <div
+        key={index}
+        className={`message ${message.type === 'bot' ? 'bot-message' : 'user-message'}`}
+      >
+        {message.text}
+      </div>
+    ));
 
   return (
     <div className="chatbot-container">
-      <img
+      <img 
         src="icon_chat.png"
-        alt="Chat Icon"
-        onClick={toggleChatbot}
+        alt="Chat"
+        onClick={toggleChat}
         className="chat-icon"
       />
       {isOpen && (
-        <div className="chat-popup">
-          <ThemeProvider theme={theme}>
-            <ChatBot 
-              steps={steps}
+        <div className="chatbox animate-slide-in">
+          <div className="messages">
+            {renderMessages()}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="input-container">
+            <input
+              type="text"
+              value={userInput}
+              onChange={e => setUserInput(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              style={{ width: '100%', height: '100%' }}
+              disabled={isLoading}
             />
-          </ThemeProvider>
+            <button onClick={handleSendMessage} disabled={isLoading}>
+              <img src="icon_chat.png" alt="Send" className="send-icon" />
+            </button>
+          </div>
         </div>
       )}
     </div>
