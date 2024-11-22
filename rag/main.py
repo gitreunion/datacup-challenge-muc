@@ -75,8 +75,6 @@ basic_rag_pipeline.connect("prompt_builder", "llm")
 while True:
     user_query = input("Votre question : ")
 
-    
-
     enriched_query = enrich_query_with_history(user_query, chat_history)
 
     response = basic_rag_pipeline.run({"text_embedder": {"text": enriched_query}, "prompt_builder": {"question": enriched_query}})
