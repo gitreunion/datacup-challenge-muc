@@ -44,39 +44,10 @@ export default function Component() {
     setIsDarkTheme((prev) => !prev);
   };
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
-
-  const handleSend = () => {
-    if (input.trim()) {
-      console.log("Sending message:", input);
-      const newMessage: Message = {
-        id: messages.length + 1,
-        sender: "You",
-        content: input,
-      };
-      setMessages([...messages, newMessage]);
-      setInput("");
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const toggleTheme = () => {
-    console.log(isDarkTheme ? "Switching to light theme" : "Switching to dark theme");
-    setIsDarkTheme((prev) => !prev);
-  };
-
   return (
     <div className={`grid md:grid-cols-[260px_1fr] min-h-screen w-full ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
-      <div className="absolute top-[-2rem] right-[-2rem] p-4">
-        <div className={`p-2 rounded-md ${isDarkTheme ? 'bg-gray-300' : ''}`}>
+      <div className="absolute top-[-2rem] right-[-0rem]">
+        <div className={`rounded-md ${isDarkTheme ? 'bg-gray-300' : ''}`}>
           <img
             src="region-reunion-logo.png"
             alt="Top Right Image"
@@ -236,7 +207,6 @@ function PenIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
 
 
 export function SendIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-export function SendIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -338,4 +308,3 @@ function ZapIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
-
