@@ -45,6 +45,38 @@ def load_dataset(dataset_path):
             docs.append(Document(content=content, meta={"source": file}))
     return docs
 
+def compose_url_fetch_siret_info(siret_number):
+    """
+    Compose the URL to fetch company information based on SIRET number.
+    
+    :param siret_number: The SIRET number to search for.
+
+    :return: The URL to fetch company information based on SIRET number.
+    """
+    return f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
+
+def compose_enterprise_details(enterprise_info):
+    """
+    Compose the enterprise details string from the provided information.
+
+    :param enterprise_info: The information about the enterprise.
+
+    :return: The enterprise details string.
+    """
+    siret = enterprise_info.get("siret", "non spécifié")
+    date_creation = enterprise_info.get("datecreationetablissement", "non spécifié")
+    address = f"{enterprise_info.get('numerovoieetablissement', 'non spécifié')} {enterprise_info.get('typevoieetablissement', 'non spécifié')} {enterprise_info.get('libellevoieetablissement', 'non spécifié')}".strip()
+    city = enterprise_info.get("libellecommuneetablissement", "non spécifié")
+    postal_code = enterprise_info.get("codepostaletablissement", "non spécifié")
+    activity = enterprise_info.get("activiteprincipaleetablissement", "non spécifié")
+    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "non spécifié")
+    
+    return (
+        f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
+        f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
+        f"Elle a une tranche d'effectifs de '{employee_range}'."
+    )
+
 # Initialize chat history
 chat_history = []
 
@@ -99,38 +131,6 @@ basic_rag_pipeline.add_component("llm", generator)
 basic_rag_pipeline.connect("text_embedder.embedding", "retriever.query_embedding")
 basic_rag_pipeline.connect("retriever", "prompt_builder.documents")
 basic_rag_pipeline.connect("prompt_builder", "llm")
-
-def compose_url_fetch_siret_info(siret_number):
-    """
-    Compose the URL to fetch company information based on SIRET number.
-    
-    :param siret_number: The SIRET number to search for.
-
-    :return: The URL to fetch company information based on SIRET number.
-    """
-    return f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
-
-def compose_enterprise_details(enterprise_info):
-    """
-    Compose the enterprise details string from the provided information.
-
-    :param enterprise_info: The information about the enterprise.
-
-    :return: The enterprise details string.
-    """
-    siret = enterprise_info.get("siret", "non spécifié")
-    date_creation = enterprise_info.get("datecreationetablissement", "non spécifié")
-    address = f"{enterprise_info.get('numerovoieetablissement', 'non spécifié')} {enterprise_info.get('typevoieetablissement', 'non spécifié')} {enterprise_info.get('libellevoieetablissement', 'non spécifié')}".strip()
-    city = enterprise_info.get("libellecommuneetablissement", "non spécifié")
-    postal_code = enterprise_info.get("codepostaletablissement", "non spécifié")
-    activity = enterprise_info.get("activiteprincipaleetablissement", "non spécifié")
-    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "non spécifié")
-    
-    return (
-        f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
-        f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
-        f"Elle a une tranche d'effectifs de '{employee_range}'."
-    )
 
 @app.route('/chat_completion', methods=['POST'])
 def chat_completion():
