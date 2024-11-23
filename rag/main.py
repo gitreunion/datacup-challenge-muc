@@ -15,31 +15,82 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-chat_history = []
-
 def enrich_query_with_history(query, history):
-    """Combine l'historique de chat avec la nouvelle requête."""
+    """
+    Combine l'historique de chat avec la nouvelle requête.
+
+    :param query: La nouvelle requête de l'utilisateur.
+    :param history: L'historique de chat précédent.
+
+    :return: La requête enrichie avec l'historique de chat.
+    """
     if not history:
         return query
     history_text = " ".join([f"Q: {q} A: {a}" for q, a in history])
     return f"{history_text} Nouvelle question: {query}"
 
+def load_dataset(dataset_path):
+    """
+    Load the dataset from the specified path and return a list of Document objects.
+
+    :param dataset_path: The path to the dataset files.
+
+    :return: A list of Document objects.
+    """
+    files = glob.glob(dataset_path)
+    docs = []
+    for file in files:
+        with open(file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            docs.append(Document(content=content, meta={"source": file}))
+    return docs
+
+def compose_url_fetch_siret_info(siret_number):
+    """
+    Compose the URL to fetch company information based on SIRET number.
+    
+    :param siret_number: The SIRET number to search for.
+
+    :return: The URL to fetch company information based on SIRET number.
+    """
+    return f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
+
+def compose_enterprise_details(enterprise_info):
+    """
+    Compose the enterprise details string from the provided information.
+
+    :param enterprise_info: The information about the enterprise.
+
+    :return: The enterprise details string.
+    """
+    siret = enterprise_info.get("siret", "non spécifié")
+    date_creation = enterprise_info.get("datecreationetablissement", "non spécifié")
+    address = f"{enterprise_info.get('numerovoieetablissement', 'non spécifié')} {enterprise_info.get('typevoieetablissement', 'non spécifié')} {enterprise_info.get('libellevoieetablissement', 'non spécifié')}".strip()
+    city = enterprise_info.get("libellecommuneetablissement", "non spécifié")
+    postal_code = enterprise_info.get("codepostaletablissement", "non spécifié")
+    activity = enterprise_info.get("activiteprincipaleetablissement", "non spécifié")
+    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "non spécifié")
+    
+    return (
+        f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
+        f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
+        f"Elle a une tranche d'effectifs de '{employee_range}'."
+    )
+
+# Initialize chat history
+chat_history = []
+
 # Initialize the DocumentStore
 document_store = InMemoryDocumentStore()
 
-# Load the dataset
 dataset_path = "dataset/*.txt"
-files = glob.glob(dataset_path)
-docs = []
-for file in files:
-    with open(file, 'r', encoding='utf-8') as f:
-        content = f.read()
-        docs.append(Document(content=content, meta={"source": file}))
+docs = load_dataset(dataset_path)
 
 # Embed documents
 doc_embedder = SentenceTransformersDocumentEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 doc_embedder.warm_up()
 
+# Write documents to DocumentStore
 docs_with_embeddings = doc_embedder.run(docs)
 document_store.write_documents(docs_with_embeddings["documents"])
 
@@ -83,7 +134,17 @@ basic_rag_pipeline.connect("prompt_builder", "llm")
 
 @app.route('/chat_completion', methods=['POST'])
 def chat_completion():
-    """Handle user input and return response based on RAG pipeline."""
+    """
+    Handle user input and return response based on RAG pipeline.
+
+    :return: The response from the chatbot.
+
+    Example input:
+    {
+        "user_message": "Je voudrais des informations sur l'entreprise avec le numéro de SIRET
+        12345678901234."
+    }
+    """
     data = request.json
     user_query = data.get('user_message', '')
     siret_info = None  # Initialize to ensure it's always defined
@@ -95,7 +156,7 @@ def chat_completion():
         print(f"Numéro SIRET détecté : {siret_number}")
         
         # URL to fetch company information based on SIRET number
-        url = f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
+        url = compose_url_fetch_siret_info(siret_number)
         try:
             response = requests.get(url)
             if response.status_code == 200:
@@ -103,21 +164,8 @@ def chat_completion():
                 if siret_info.get("total_count", 0) > 0:
                     enterprise_info = siret_info["results"][0]
                     # Extract relevant data and replace None values with "Non spécifié"
-                    siret = enterprise_info.get("siret", "non spécifié")
-                    date_creation = enterprise_info.get("datecreationetablissement", "non spécifié")
-                    address = f"{enterprise_info.get('numerovoieetablissement', 'non spécifié')} {enterprise_info.get('typevoieetablissement', 'non spécifié')} {enterprise_info.get('libellevoieetablissement', 'non spécifié')}".strip()
-                    city = enterprise_info.get("libellecommuneetablissement", "non spécifié")
-                    postal_code = enterprise_info.get("codepostaletablissement", "non spécifié")
-                    activity = enterprise_info.get("activiteprincipaleetablissement", "non spécifié")
-                    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "non spécifié")
-                    
-                    # Build the enterprise details string
-                    enterprise_details = (
-                        f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
-                        f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
-                        f"Elle a une tranche d'effectifs de '{employee_range}'."
-                    )
-                    
+                    enterprise_details = compose_enterprise_details(enterprise_info)
+
                     # Append to user_query
                     user_query += f" Voici les informations sur cette entreprise : {enterprise_details}"
 
@@ -148,7 +196,11 @@ def chat_completion():
 
 @app.route('/history', methods=['GET'])
 def get_chat_history():
-    """Return the chat history."""
+    """
+    Return the chat history.
+    
+    :return: The chat history.
+    """
     return jsonify({"history": chat_history})
 
 if __name__ == "__main__":
