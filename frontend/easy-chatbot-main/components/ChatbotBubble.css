@@ -80,6 +80,25 @@
   white-space: pre-wrap;
 }
 
+.sender {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #3300ff;
+  margin-bottom: 4px;
+}
+
+.sender-icon {
+  width: 50px;
+  height: 40px;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+.message-text {
+  font-size: 1rem;
+}
+
 .bot-message {
   background-color: #00b2a9;
   color: #fff;
