@@ -1,13 +1,13 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from haystack.document_stores.in_memory import InMemoryDocumentStore
 from haystack import Document
-from haystack.components.embedders import SentenceTransformersTextEmbedder
+from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 from haystack.components.retrievers.in_memory import InMemoryEmbeddingRetriever
 from haystack.components.builders import PromptBuilder
 from haystack import Pipeline
-from haystack.components.embedders import SentenceTransformersDocumentEmbedder
-from haystack_integrations.components.generators.ollama import OllamaGenerator
+from mistralai import Mistral
 import glob
 import re
 import requests
@@ -15,41 +15,59 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-chat_history = []
-
 def enrich_query_with_history(query, history):
-    """Combine l'historique de chat avec la nouvelle requête."""
+    """
+    Combine chat history with the new query.
+
+    :param query: The new user query.
+    :param history: The previous chat history.
+
+    :return: The query enriched with chat history.
+    """
     if not history:
         return query
     history_text = " ".join([f"Q: {q} A: {a}" for q, a in history])
-    return f"{history_text} Nouvelle question: {query}"
+    return f"{history_text} New question: {query}"
+
+def load_dataset(dataset_path):
+    """
+    Load the dataset from the specified path and return a list of Document objects.
+
+    :param dataset_path: The path to the dataset files.
+
+    :return: A list of Document objects.
+    """
+    files = glob.glob(dataset_path)
+    docs = []
+    for file in files:
+        with open(file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            docs.append(Document(content=content, meta={"source": file}))
+    return docs
+
+# Initialize chat history
+chat_history = []
 
 # Initialize the DocumentStore
 document_store = InMemoryDocumentStore()
 
-# Load the dataset
-dataset_path = "dataset/*.txt"
-files = glob.glob(dataset_path)
-docs = []
-for file in files:
-    with open(file, 'r', encoding='utf-8') as f:
-        content = f.read()
-        docs.append(Document(content=content, meta={"source": file}))
+dataset_path = "./dataset/*.txt"  # Make sure this matches your dataset location
+docs = load_dataset(dataset_path)
 
 # Embed documents
 doc_embedder = SentenceTransformersDocumentEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 doc_embedder.warm_up()
 
+# Write documents to DocumentStore
 docs_with_embeddings = doc_embedder.run(docs)
 document_store.write_documents(docs_with_embeddings["documents"])
 
 # Setup retriever and other components
-text_embedder = SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 retriever = InMemoryEmbeddingRetriever(document_store)
 
 # Define the prompt template
 template = """
-Répond à la question simplement, soit concis dans tes phrases et utilise les informations suivantes.
+Answer the question simply, be concise in your responses and use the following information.
 
 Context:
 {% for document in documents %}
@@ -60,30 +78,57 @@ Question: {{question}}
 Answer:
 """
 
-# Setup prompt builder and generator
+# Setup prompt builder
 prompt_builder = PromptBuilder(template=template)
-
-generator = OllamaGenerator(model="mistral",
-                            url="http://localhost:11434/",
-                            generation_kwargs={
-                              "num_predict": 500                              
-                            })
 
 # Create the pipeline
 basic_rag_pipeline = Pipeline()
-basic_rag_pipeline.add_component("text_embedder", text_embedder)
 basic_rag_pipeline.add_component("retriever", retriever)
 basic_rag_pipeline.add_component("prompt_builder", prompt_builder)
-basic_rag_pipeline.add_component("llm", generator)
 
-# Connect components
-basic_rag_pipeline.connect("text_embedder.embedding", "retriever.query_embedding")
-basic_rag_pipeline.connect("retriever", "prompt_builder.documents")
-basic_rag_pipeline.connect("prompt_builder", "llm")
+# Initialize Mistral client
+api_key = os.environ["MISTRAL_API_KEY"]
+model = "mistral-large-latest"
+mistral_client = Mistral(api_key=api_key)
+
+def compose_url_fetch_siret_info(siret_number):
+    """
+    Compose the URL to fetch company information based on SIRET number.
+    
+    :param siret_number: The SIRET number to search for.
+
+    :return: The URL to fetch company information based on SIRET number.
+    """
+    return f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
+
+def compose_enterprise_details(enterprise_info):
+    """
+    Compose the enterprise details string from the provided information.
+
+    :param enterprise_info: The information about the enterprise.
+
+    :return: The enterprise details string.
+    """
+    siret = enterprise_info.get("siret", "not specified")
+    date_creation = enterprise_info.get("datecreationetablissement", "not specified")
+    address = f"{enterprise_info.get('numerovoieetablissement', 'not specified')} {enterprise_info.get('typevoieetablissement', 'not specified')} {enterprise_info.get('libellevoieetablissement', 'not specified')}".strip()
+    city = enterprise_info.get("libellecommuneetablissement", "not specified")
+    postal_code = enterprise_info.get("codepostaletablissement", "not specified")
+    activity = enterprise_info.get("activiteprincipaleetablissement", "not specified")
+    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "not specified")
+    
+    return (
+        f"The company with SIRET {siret} was created on {date_creation}. It is located at "
+        f"{address}, {postal_code} {city}. Its main activity is '{activity}'. "
+        f"It has an employee range of '{employee_range}'."
+    )
 
 @app.route('/chat_completion', methods=['POST'])
 def chat_completion():
-    """Handle user input and return response based on RAG pipeline."""
+    """
+    Handle user input and return response based on RAG pipeline.
+    :return: The response from the chatbot.
+    """
     data = request.json
     user_query = data.get('user_message', '')
     siret_info = None  # Initialize to ensure it's always defined
@@ -92,63 +137,57 @@ def chat_completion():
     regex = r"\b\d{14}\b"
     if re.search(regex, user_query):
         siret_number = re.search(regex, user_query).group()
-        print(f"Numéro SIRET détecté : {siret_number}")
+        print(f"SIRET number detected: {siret_number}")
         
         # URL to fetch company information based on SIRET number
-        url = f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
+        url = compose_url_fetch_siret_info(siret_number)
         try:
             response = requests.get(url)
             if response.status_code == 200:
                 siret_info = response.json()
                 if siret_info.get("total_count", 0) > 0:
                     enterprise_info = siret_info["results"][0]
-                    # Extract relevant data and replace None values with "Non spécifié"
-                    siret = enterprise_info.get("siret", "non spécifié")
-                    date_creation = enterprise_info.get("datecreationetablissement", "non spécifié")
-                    address = f"{enterprise_info.get('numerovoieetablissement', 'non spécifié')} {enterprise_info.get('typevoieetablissement', 'non spécifié')} {enterprise_info.get('libellevoieetablissement', 'non spécifié')}".strip()
-                    city = enterprise_info.get("libellecommuneetablissement", "non spécifié")
-                    postal_code = enterprise_info.get("codepostaletablissement", "non spécifié")
-                    activity = enterprise_info.get("activiteprincipaleetablissement", "non spécifié")
-                    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "non spécifié")
-                    
-                    # Build the enterprise details string
-                    enterprise_details = (
-                        f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
-                        f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
-                        f"Elle a une tranche d'effectifs de '{employee_range}'."
-                    )
-                    
-                    # Append to user_query
-                    user_query += f" Voici les informations sur cette entreprise : {enterprise_details}"
-
+                    enterprise_details = compose_enterprise_details(enterprise_info)
+                    user_query += f" Here are the details about this company: {enterprise_details}"
                 else:
-                    user_query += " Je n'ai trouvé aucune information sur ce numéro de SIRET."
+                    user_query += " No information found for this SIRET number."
             else:
-                user_query += f" Erreur lors de la récupération des informations (statut {response.status_code})."
+                user_query += f" Error retrieving information (status {response.status_code})."
         except requests.RequestException as e:
-            user_query += f" Une erreur est survenue lors de la connexion à l'API : {str(e)}."
+            user_query += f" An error occurred while connecting to the API: {str(e)}."
     else:
-        print("Aucun numéro SIRET détecté dans la requête utilisateur.")
+        print("No SIRET number detected in the user query.")
 
     # Enrich the query with chat history
     enriched_query = enrich_query_with_history(user_query, chat_history)
     print(f"Enriched query: {enriched_query}")
 
-    # Run the RAG pipeline
-    response = basic_rag_pipeline.run({
-        "text_embedder": {"text": enriched_query},
-        "prompt_builder": {"question": enriched_query}
-    })
-    reply = response["llm"]["replies"][0]
+    # Use the document store to fetch relevant documents
+    retrieved_docs = document_store.query(enriched_query, top_k=3)
+    documents = [doc.content for doc in retrieved_docs]
+
+    # Make a request to Mistral API
+    chat_response = mistral_client.chat.complete(
+        model=model,
+        messages=[
+            {"role": "user", "content": enriched_query}
+        ]
+    )
     
+    reply = chat_response.choices[0].message.content
+
     # Add to chat history
     chat_history.append((user_query, reply))
 
-    return jsonify({"reply": reply, "siret_info": siret_info})
+    return jsonify({"reply": reply, "siret_info": siret_info, "documents": documents})
 
 @app.route('/history', methods=['GET'])
 def get_chat_history():
-    """Return the chat history."""
+    """
+    Return the chat history.
+    
+    :return: The chat history.
+    """
     return jsonify({"history": chat_history})
 
 if __name__ == "__main__":
