@@ -16,33 +16,87 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-chat_history = []
-
 def enrich_query_with_history(query, history):
-    """Combine l'historique de chat avec la nouvelle requête."""
+    """
+    Combine l'historique de chat avec la nouvelle requête.
+
+    :param query: La nouvelle requête de l'utilisateur.
+    :param history: L'historique de chat précédent.
+
+    :return: La requête enrichie avec l'historique de chat.
+    """
     if not history:
         return query
     history_text = " ".join([f"Q: {q} A: {a}" for q, a in history])
     return f"{history_text} Nouvelle question: {query}"
+
+def load_dataset(dataset_path):
+    """
+    Load the dataset from the specified path and return a list of Document objects.
+
+    :param dataset_path: The path to the dataset files.
+
+    :return: A list of Document objects.
+    """
+    files = glob.glob(dataset_path)
+    docs = []
+    for file in files:
+        with open(file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            docs.append(Document(content=content, meta={"source": file}))
+    return docs
+
+def compose_url_fetch_siret_info(siret_number):
+    """
+    Compose the URL to fetch company information based on SIRET number.
+    
+    :param siret_number: The SIRET number to search for.
+
+    :return: The URL to fetch company information based on SIRET number.
+    """
+    return f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
+
+def compose_enterprise_details(enterprise_info):
+    """
+    Compose the enterprise details string from the provided information.
+
+    :param enterprise_info: The information about the enterprise.
+
+    :return: The enterprise details string.
+    """
+    siret = enterprise_info.get("siret", "non spécifié")
+    date_creation = enterprise_info.get("datecreationetablissement", "non spécifié")
+    address = f"{enterprise_info.get('numerovoieetablissement', 'non spécifié')} {enterprise_info.get('typevoieetablissement', 'non spécifié')} {enterprise_info.get('libellevoieetablissement', 'non spécifié')}".strip()
+    city = enterprise_info.get("libellecommuneetablissement", "non spécifié")
+    postal_code = enterprise_info.get("codepostaletablissement", "non spécifié")
+    activity = enterprise_info.get("activiteprincipaleetablissement", "non spécifié")
+    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "non spécifié")
+    
+    return (
+        f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
+        f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
+        f"Elle a une tranche d'effectifs de '{employee_range}'."
+    )
+
+# Initialisation de l'historique de chat
+chat_history = []
 
 # Initialisation du DocumentStore
 document_store = InMemoryDocumentStore()
 
 # Charger les documents dans Vot le DocumentStore
 dataset_path = "dataset/*.txt"
-files = glob.glob(dataset_path)
-docs = []
-for file in files:
-    with open(file, 'r', encoding='utf-8') as f:
-        content = f.read()
-        docs.append(Document(content=content, meta={"source": file}))
+docs = load_dataset(dataset_path)
 
+# Incorporer les documents
 doc_embedder = SentenceTransformersDocumentEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 doc_embedder.warm_up()
 
+# Écrire les documents dans le DocumentStore
 docs_with_embeddings = doc_embedder.run(docs)
 document_store.write_documents(docs_with_embeddings["documents"])
 
+# Initialisation des composants du pipeline RAG
 text_embedder = SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 retriever = InMemoryEmbeddingRetriever(document_store)
 
@@ -82,35 +136,25 @@ def chat_completion():
     siret_info = None  # Initialize to ensure it's always defined
 
     # Détection du numéro SIRET dans la requête utilisateur
-    regex = r"\b\d{14}\b"  # Correspond aux numéros SIRET de 14 chiffres
+    regex = r"\b\d{14}\b"
     if re.search(regex, user_query):
         siret_number = re.search(regex, user_query).group()
         print(f"Numéro SIRET détecté : {siret_number}")
         
-        # URL pour récupérer les informations sur l'entreprise
-        url = f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
+        # URL to fetch company information based on SIRET number
+        url = compose_url_fetch_siret_info(siret_number)
         try:
             response = requests.get(url)
             if response.status_code == 200:
                 siret_info = response.json()
                 if siret_info.get("total_count", 0) > 0:
                     enterprise_info = siret_info["results"][0]
-                    # Récupération des données spécifiques
-                    siret = enterprise_info.get("siret", "Non disponible")
-                    date_creation = enterprise_info.get("datecreationetablissement", "Non disponible")
-                    address = f"{enterprise_info.get('numerovoieetablissement', '')} {enterprise_info.get('typevoieetablissement', '')} {enterprise_info.get('libellevoieetablissement', '')}".strip()
-                    city = enterprise_info.get("libellecommuneetablissement", "Non disponible")
-                    postal_code = enterprise_info.get("codepostaletablissement", "Non disponible")
-                    activity = enterprise_info.get("activiteprincipaleetablissement", "Non disponible")
-                    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "Non disponible")
-                    
-                    # Formatage des informations en français
-                    enterprise_details = (
-                        f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
-                        f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
-                        f"Elle a une tranche d'effectifs de '{employee_range}'."
-                    )
+                    # Extract relevant data and replace None values with "Non spécifié"
+                    enterprise_details = compose_enterprise_details(enterprise_info)
+
+                    # Append to user_query
                     user_query += f" Voici les informations sur cette entreprise : {enterprise_details}"
+
                 else:
                     user_query += " Je n'ai trouvé aucune information sur ce numéro de SIRET."
             else:
