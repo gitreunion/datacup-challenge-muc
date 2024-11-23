@@ -8,7 +8,6 @@ import ChatComponent from "@/app/ChatComponent";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { JSX, SVGProps } from "react";
-
 interface Message {
   id: number;
   sender: string;
@@ -44,43 +43,39 @@ export default function Component() {
     console.log(isDarkTheme ? "Switching to light theme" : "Switching to dark theme");
     setIsDarkTheme((prev) => !prev);
   };
-
   return (
     <div className={`grid md:grid-cols-[260px_1fr] min-h-screen w-full ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
-      <div className={`flex-col hidden gap-2 ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-white text-black'} md:flex md:flex-col`}>
+      <div className="absolute top-[-2rem] right-[-2rem] p-4">
+        <div className={`p-2 rounded-md ${isDarkTheme ? 'bg-gray-300' : ''}`}>
+          <img
+            src="region-reunion-logo.png"
+            alt="Top Right Image"
+            className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-md"
+          />
+        </div>
+      </div>
+      {/* Sidebar */}
+      <div className={`flex-col hidden gap-2 ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-white text-black'} md:flex md:flex-col z-50`}>
         <div className="sticky top-0 p-2">
           <Button variant="ghost" className="justify-start w-full gap-2 px-2 text-left">
             <div className="flex items-center justify-center rounded-full w-7 h-7">
-              <BotIcon/>
+              <BotIcon />
             </div>
-            <div className="overflow-hidden text-sm grow text-ellipsis whitespace-nowrap">Koz Numérik</div>
-            {/* <PenIcon/> */}
+            <div className="overflow-hidden text-lg grow text-ellipsis whitespace-nowrap">Koz Numérik</div>
           </Button>
           <Button onClick={toggleTheme} className="mt-2">
             {isDarkTheme ? "Passer en mode clair" : "Passer en mode sombre"}
           </Button>
         </div>
-        {/* <div className="flex-1 overflow-auto">
-          <div className={`grid gap-1 p-2 ${isDarkTheme ? 'text-white' : 'text-black'}`}>
-            <div className="px-2 text-xs font-medium text-muted-foreground">Conversations récentes</div>
-            <Link href="#" className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50">
-              Conv 1
-            </Link>
-            <Link href="#" className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50">
-              Conv 2
-            </Link>
-            <Link href="#" className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50">
-              Conv 3
-            </Link>
-          </div>
-        </div> */}
       </div>
-      <ChatComponent isDarkTheme={isDarkTheme}/>
-      <div className="absolute top-0 right-0 m-4">
-        <img src="region-reunion-logo.png" alt="Top Right Image" className="w-9 h-9 md:w-18 md:h-18 lg:w-36 lg:h-36 rounded-full"/>
-      </div>
+
+      {/* Chat Component */}
+      <ChatComponent isDarkTheme={isDarkTheme} />
+
+      {/* Navbar */}
     </div>
   );
+
 }
 
 function BotIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -312,3 +307,4 @@ function ZapIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
+
