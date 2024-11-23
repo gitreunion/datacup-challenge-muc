@@ -1,196 +1,82 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/jUGtvk7xYea
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Textarea } from "@/components/ui/textarea"
-import { JSX, SVGProps } from "react"
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import ChatComponent from "@/app/ChatComponent";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
+import { JSX, SVGProps } from "react";
+interface Message {
+  id: number;
+  sender: string;
+  content: string;
+}
 
 export default function Component() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  const handleSend = () => {
+    if (input.trim()) {
+      console.log("Sending message:", input);
+      const newMessage: Message = {
+        id: messages.length + 1,
+        sender: "You",
+        content: input,
+      };
+      setMessages([...messages, newMessage]);
+      setInput("");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const toggleTheme = () => {
+    console.log(isDarkTheme ? "Switching to light theme" : "Switching to dark theme");
+    setIsDarkTheme((prev) => !prev);
+  };
+
   return (
-    <div className="grid md:grid-cols-[260px_1fr] min-h-screen w-full">
-      <div className="flex-col hidden gap-2 text-foreground bg-background md:flex md:flex-col">
+    <div className={`grid md:grid-cols-[260px_1fr] min-h-screen w-full ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+      <div className="absolute top-[-2rem] right-[-2rem] p-4">
+        <div className={`p-2 rounded-md ${isDarkTheme ? 'bg-gray-300' : ''}`}>
+          <img
+            src="region-reunion-logo.png"
+            alt="Top Right Image"
+            className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-md"
+          />
+        </div>
+      </div>
+      {/* Sidebar */}
+      <div className={`flex-col hidden gap-2 ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-white text-black'} md:flex md:flex-col z-50`}>
         <div className="sticky top-0 p-2">
           <Button variant="ghost" className="justify-start w-full gap-2 px-2 text-left">
             <div className="flex items-center justify-center rounded-full w-7 h-7">
-              <BotIcon className="w-4 h-4" />
+              <BotIcon />
             </div>
-            <div className="overflow-hidden text-sm grow text-ellipsis whitespace-nowrap">Easy Chatbot</div>
-            <PenIcon className="w-4 h-4" />
+            <div className="overflow-hidden text-lg grow text-ellipsis whitespace-nowrap">Koz Numérik</div>
+          </Button>
+          <Button onClick={toggleTheme} className="mt-2">
+            {isDarkTheme ? "Passer en mode clair" : "Passer en mode sombre"}
           </Button>
         </div>
-        <div className="flex-1 overflow-auto">
-          <div className="grid gap-1 p-2 text-foreground">
-            <div className="px-2 text-xs font-medium text-muted-foreground">Recent Conversations</div>
-            <Link
-              href="#"
-              className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50"
-              prefetch={false}
-            >
-              Image Upload Test
-            </Link>
-            <Link
-              href="#"
-              className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50"
-              prefetch={false}
-            >
-              Video Playback
-            </Link>
-            <Link
-              href="#"
-              className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50"
-              prefetch={false}
-            >
-              PDF Viewer
-            </Link>
-          </div>
-        </div>
       </div>
-      <div className="flex flex-col">
-        <div className="sticky top-0 p-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-1 rounded-xl px-3 h-10 data-[state=open]:bg-muted text-lg">
-                Easy Chatbot Playground <span className="text-muted-foreground">v1.0</span>
-                <ChevronDownIcon className="w-4 h-4 text-muted-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="max-w-[300px]">
-              <DropdownMenuItem className="items-start gap-2">
-                <SparkleIcon className="w-4 h-4 mr-2 translate-y-1 shrink-0" />
-                <div>
-                  <div className="font-medium">Easy Chatbot Pro</div>
-                  <div className="text-muted-foreground/80">Advanced features, image/video support, and more.</div>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="items-start gap-2">
-                <ZapIcon className="w-4 h-4 mr-2 translate-y-1 shrink-0" />
-                <div>
-                  <div className="font-medium">Easy Chatbot Basic</div>
-                  <div className="text-muted-foreground/80">Simple text-based chatbot for quick tasks.</div>
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="flex flex-col items-start flex-1 max-w-2xl gap-8 px-4 mx-auto">
-          <div className="flex items-start gap-4 mt-4">
-            <Avatar className="w-6 h-6 border">
-              <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback>YO</AvatarFallback>
-            </Avatar>
-            <div className="grid gap-1">
-              <div className="font-bold">You</div>
-              <div className="prose text-muted-foreground">
-                <p>
-                  Hi there! I would like to try out the new Easy Chatbot Playground. Can I upload some images, videos, and PDFs
-                  to test the features?
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-start gap-4">
-            <Avatar className="w-6 h-6 border">
-              <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback>EU</AvatarFallback>
-            </Avatar>
-            <div className="grid gap-1">
-              <div className="font-bold">Chatbot</div>
-              <div className="prose text-muted-foreground">
-                <p>
-                  Absolutely! The Easy Chatbot Playground is designed to handle a variety of media types. Feel free to upload
-                  any images, videos, or PDFs you&apos;d like to test. I&apos;ll be happy to assist you with those tasks.
-                </p>
-                <p>
-                  To get started, you can use the buttons below to upload your files. Once they&apos;re uploaded, I&apos;ll be
-                  able to process and respond to them.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 py-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-4 h-4 hover:bg-transparent text-stone-400 hover:text-stone-900"
-                >
-                  <UploadIcon className="w-4 h-4" />
-                  <span className="sr-only">Upload</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-4 h-4 hover:bg-transparent text-stone-400 hover:text-stone-900"
-                >
-                  <VideoIcon className="w-4 h-4" />
-                  <span className="sr-only">Video</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-4 h-4 hover:bg-transparent text-stone-400 hover:text-stone-900"
-                >
-                  <FileIcon className="w-4 h-4" />
-                  <span className="sr-only">PDF</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-4 h-4 hover:bg-transparent text-stone-400 hover:text-stone-900"
-                >
-                  <SendIcon className="w-4 h-4" />
-                  <span className="sr-only">Send</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-4 h-4 hover:bg-transparent text-stone-400 hover:text-stone-900"
-                >
-                  <CircleStopIcon className="w-4 h-4" />
-                  <span className="sr-only">Stop</span>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-2xl w-full sticky bottom-0 mx-auto py-2 flex flex-col gap-1.5 px-4 bg-background">
-          <div className="relative">
-            <Textarea
-              placeholder="Type your message..."
-              name="message"
-              rows={1}
-              className="min-h-[48px] rounded-2xl resize-none p-4 border border-neutral-400 shadow-sm pr-16"
-            >
-              <div className="absolute w-8 h-8 top-3 right-3 flex items-center gap-2">
-                <Button size="icon">
-                  <PaperclipIcon className="w-4 h-4 mr-2" />
-                  Attach
-                </Button>
-                <Button size="icon">
-                  <UploadIcon className="w-4 h-4 mr-2" />
-                  Upload
-                </Button>
-                <Button size="icon">
-                  <SendIcon className="w-4 h-4 mr-2" />
-                  Send
-                </Button>
-              </div>
-            </Textarea>
-            <Button type="submit" size="icon" className="absolute w-8 h-8 top-3 right-3">
-              <SendIcon className="w-4 h-4" />
-              <span className="sr-only">Upload</span>
-            </Button>
-          </div>
-          <p className="text-xs font-medium text-center text-neutral-700">
-            The Chatbot Playground is a beta feature. Use at your own risk.
-          </p>
-        </div>
-      </div>
+
+      {/* Chat Component */}
+      <ChatComponent isDarkTheme={isDarkTheme} />
+
+      {/* Navbar */}
     </div>
-  )
+  );
+
 }
 
 function BotIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -320,7 +206,7 @@ function PenIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
 }
 
 
-function SendIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+export function SendIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
