@@ -23,6 +23,17 @@ Notre solution répond au problème de l'accès complexe aux informations sur le
 
 [Guide d'installation](/INSTALL.md)
 
+### **Branches**
+En fonction de la branche actuelle, le modèle de l'IA change, voici leurs différences :
+```
+    - Dans la branche main et openai-api :
+        - Une clé openai est nécessaire pour le fonctionnement
+    - Dans la branche mistal-api
+        - Une clé mistral est nécessaire pour le fonctionnement
+    - Dans la branche local-mistral
+        - Aucune clé n'est nécessaire pour le fonctionnement
+```
+
 ### **Utilisation**
 
 Pour lancer le projet il faut éxécuter ces commandes :
