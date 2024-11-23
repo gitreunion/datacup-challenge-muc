@@ -1,0 +1,447 @@
+                       Programme Européen FEDER
+                                  2021-2027
+                             Île de La Réunion
+
+                                       FICHE ACTION 1.2.5
+                                          Kap numérik
+ Direction FEDER                Economie
+ Priorité                       1 : Soutenir l’innovation, la recherche et le développement des filières priori-
+                                taires afin de favoriser le retour de la croissance durable et de l’emploi
+ Objectif Stratégique           1 : Une Europe plus compétitive et plus intelligente par l’encouragement d’une
+                                transformation économique intelligente et innovante
+ Objectif Spécifique            1-2 : Tirer parti des avantages de la numérisation au bénéfice des citoyens, des
+                                entreprises, des organismes de recherche et des pouvoirs publics (FEDER)
+ Domaine d’intervention         013.Numérisation des PME (y compris le commerce électronique, l’e-business
+                                et les processus d’entreprise en réseau, les pôles d’innovation numérique, les
+                                laboratoires vivants, les entrepreneurs web et les start-ups spécialisées dans les
+                                TIC, B2B)
+ Intitulé de la fiche action    Kap numérik
+ Date d’approbation des         07/04/2023
+ critères de sélection
+ Date de validation             31/03/2023
+ Commission Permanente
+ N° de version                  V1
+
+
+                 POURSUITE D'UNE MESURE D'UN PROGRAMME PRÉCÉDENT
+
+ Non                                         Oui, partiellement                     Oui, en totalité    X
+
+
+1. CONTEXTE
+
+Le développement du numérique est l’un des défis majeurs du territoire car il doit non seulement permettre
+une mutation des pratiques dont les répercutions seraient positives en matière de déplacement et
+d’environnement sur le territoire mais aussi la mise à niveau du territoire par rapport aux standards des pays
+les plus développés y compris en matière de cybersécurité. Selon une étude de la Chambre des métiers et de
+l’Artisanat datant de 2017 (« Usages et besoins des entreprises artisanales en matière de numérique »), 16 %
+des entreprises réunionnaises possèdent un site internet contre 50 % en métropole et seuls 2 % vendent en ligne.
+
+A La Réunion, le dynamisme de l'adoption des usages du numérique par la population réunionnaise peut
+contraster avec la situation des entreprises, en particulier les TPE.
+
+Au regard des enjeux et des constats posés dans le Schéma Régional de Développement Économique
+d'innovation et d'internationalisation (SRDEII), le programme retient notamment les objectifs suivants :
+- Augmenter les initiatives privées dans le champ des e-services,
+- Développer l’attractivité du numérique à destination des TPE en priorité, et des PME.
+                                       FEDER Réunion 2021-2027 - FA 1.2.5
+                                                Kap numérik
+
+
+
+
+2. OBJECTIFS DE LA FICHE ACTION
+
+Dans la perspective de développer l’accès au numérique et d’améliorer la résilience du tissu des entreprises,
+en particulier des TPE, il convient de soutenir leurs investissements numériques.
+Cette action a principalement pour objectif de permettre aux très petites entreprises (artisans, commerçants, ...)
+d’amorcer la mise en œuvre d’une stratégie digitale au sein de leurs activités.
+
+A la différence de l’action liée à la numérisation des entreprises, cette action cible exclusivement les TPE. Ces
+dernières n’ont généralement aucune approche de l’application des outils numériques au sein de leurs activités.
+L’accompagnement leur permettra avant tout de poser un diagnostic et des préconisations de mise en œuvre
+d’une stratégie digitale.
+
+Des investissements matériels peuvent également être possibles dans cette phase d’amorçage liée à leur
+transition numérique.
+
+
+3. DESCRIPTION TECHNIQUE
+
+Cette action est destinée à financer les projets liés à la stratégie digitale de l’entreprise dans une phase
+d’amorçage : visibilité numérique, marketing digital, nouveaux services apportés aux usagers, sécurisation des
+systèmes d’information.
+
+
+4. BENEFICIAIRES
+
+TPE de moins de 20 personnes.
+Au regard du nombre de dossiers, la RÉGION RÉUNION assurera le préfinancement.
+
+
+5. LOCALISATION GEOGRAPHIQUE DE L'INTERVENTION
+
+Toute l'île
+
+
+6. PERIMETRE DES DEPENSES ELIGIBLES ET NON ELIGIBLES
+
+Dépenses éligibles :
+Prestations de services et acquisition d’équipements en lien direct avec les projets suivants :
+
+        Projets liés à la visibilité numérique de l’entreprise et aux services aux usagers
+• Accompagnement à la définition de la stratégie digitale
+• Création ou refonte d’un site internet, d’une solution de vente en ligne ou de click and collect, référencement
+naturel (SEO), abonnement forfaitaire à une place de marché, développement de la présence sur les réseaux
+sociaux (community management), développement d’une application mobile …
+• Fourniture et installation d’équipements en lien direct avec le projet
+
+         Projets liés à la sécurité informatique
+• audits de sécurité, tests d’intrusion
+• sécurisation des sites Internet
+• sécurisation des données : conformité RGPD, correction des failles ou exploits, assistance à la création de
+VPN, prestation de sauvegarde des données.
+
+
+Dépenses non éligibles :
+- TVA ;
+- Achat de licences de logiciels de gestion interne ou spécifique métier ;
+- Développement d’applications de gestion interne (intranet, …) ;
+
+                                                       2/8
+                                       FEDER Réunion 2021-2027 - FA 1.2.5
+                                                Kap numérik
+
+
+- Logiciels métiers spécifiques à un secteur d’activités ;
+- Valorisation des prestations réalisées en interne (salaires…) ;
+- Dépenses de publicité en ligne, de campagnes payantes (SEA) ;
+- Prestations réalisées par des entreprises domiciliés hors de l’Union Européenne ;
+- Prestations réglées en espèces.
+
+
+7. INDICATEUR SPECIFIQUE DE REALISATION
+
+Indicateurs de réalisation :
+
+    Code                    Nom de l’indicateur                Unité de me- Objectif Inter- Objectif Cible
+                                                                   sure       médiaire          2029
+                                                                                2024
+RCO 01        Entreprises bénéficiant d’un soutien (dont      Entreprises        750           2 650
+              micro, petites, moyennes, grandes)
+RCO 02        Entreprises soutenues au moyen de subven- Entreprises                     750            2 650
+              tions
+
+
+Indicateurs de résultat :
+
+                                                              Unité de       Valeur       Année         Valeur
+    Code        Indicateur
+                                                              mesure        référence    référence    cible 2029
+
+ RCR 012        Utilisateurs de produits, services ou ap-    Euro              0              2021      119 000
+                plications numériques, nouveaux et réa-
+                ménagés, élaborés par des entreprises
+
+
+
+8. CRITERES DE SELECTION
+(Conformément à l'art 73 du Règ. Général)
+
+Critères de sélection transversaux définis dans le programme réglementairement :
+Les projets soutenus devront contribuer à l’atteinte des objectifs de l’Union Européenne et ceux du programme
+FEDER FSE+ 21-27 de la Réunion.
+
+A ce titre :
+- Les porteurs de projets soutenus devront s’engager à respecter la Charte des droits fondamentaux de l’Union
+Européenne.
+- Les opérations sélectionnées devront contribuer à l’égalité, à l’inclusion et à la non-discrimination des publics
+concernés.
+- Pour les infrastructures et opérations accueillant du public, les opérations soutenues devront
+systématiquement garantir l’accessibilité, sans discrimination, des locaux aux publics concernés.
+- Les projets sélectionnés devront contribuer à la transition vers une économie neutre pour le climat dans le
+cadre du Pacte Vert pour l’Europe. L’analyse DNSH du programme a, au titre de ce type d’action et des
+méthodologies nationale et communautaire, établit le parallèle avec le même type d'actions inscrit au PNRR
+soutenant le développement des outils numériques au niveau des services publics, des entreprises, ainsi que
+dans le domaine de la santé. L'analyse a conclu à un impact globalement neutre au regard des 6 critères analysés.
+- Les projets soutenus devront majoritairement contribuer à l’atteinte du cadre de performance du programme,
+de ses valeurs cibles de réalisation et de résultat.
+
+
+
+
+                                                       3/8
+                                         FEDER Réunion 2021-2027 - FA 1.2.5
+                                                  Kap numérik
+
+
+- Les opérations seront sélectionnées en cohérence avec les lignes de partage du programme afin d’assurer une
+efficacité, une utilisation optimale et de sécuriser l’usage des fonds communautaires sur le territoire
+réunionnais.
+- Les projets soutenus devront être compatibles avec la réglementation des aides d’état.
+- Les porteurs de projet soutenus devront disposer de la capacité technique et financière nécessaire pour mener
+à bien les opérations sélectionnées.
+
+Au titre de l’OS 1.2 : Les projets soutenus devront permettre une numérisation des activités des entreprises
+comme proposé dans le Schéma Régional de Développement Économique d'innovation et
+d'internationalisation (SRDEII), notamment au travers du comité de filière numérique.
+
+
+Critères de sélection spécifiques :
+
+L’aide a principalement pour objectif de permettre aux très petites entreprises (artisans, commerçants, ...) et
+associations de relancer leur activité grâce à une stratégie digitale de communication permettant, par exemple
+la diversification des canaux de vente.
+
+Les dépenses financées correspondent à des prestations de service et acquisition d’équipements en lien avec des
+projets liés à la visibilité numérique de l’entreprise et aux services aux usagers, et/ou des projets liés à la sécurité
+informatique.
+
+Les bénéficiaires suivants sont considérés comme éligibles :
+       • Entreprises au sens communautaire de moins de 20 salariés (TPE) y compris les entreprises sans salarié,
+       inscrites au Registre du Commerce et des Sociétés ou au Registre des métiers de La Réunion, ou dûment
+       enregistrées à la Préfecture de La Réunion pour les associations.
+                ◦ Pour les entreprises de 0 à 9 salariés, le chiffre d’affaires devra être inférieur à 500 000 euros.
+                ◦ Pour les entreprises de 10 à 19 salariés, le chiffre d’affaires devra être inférieur à 1 000 000
+                d’euros.
+       • Professions libérales non réglementées ou assimilées, domiciliées à la Réunion, dont le chiffre
+       d’affaires est inférieur à 500 000 euros.
+       • Associations de moins de 10 salariés, domiciliés à la Réunion
+       Le gérant et/ou associé majoritaire de plusieurs entreprises ne pourra déposer qu’une demande au
+       maximum au cours de la même année calendaire.
+
+Les projets des entreprises ayant leur activité dans la zone des hauts ou dans l’Est de l’île seront privilégiés.
+
+Exclusions relatives aux caractéristiques des entreprises financées :
+
+Les entreprises exerçant leur activité principale dans les secteurs ci-après ne sont pas éligibles :
+     Les secteurs d’activité exclus par le Règlement général d’exemption par catégorie (RGEC)
+     Les secteurs de la production primaire de produits agricoles, de la pêche et de l’aquaculture
+     Les activités financières, la promotion immobilière
+
+Les professions libérales et leur groupement (SELARL, SCM) qui relèvent d’un ordre professionnel ou as-
+similé qui concernent une activité réglementée (médecin, avocat, expert-comptable, chirurgien-dentiste,
+vétérinaire, sage-femme, infirmier libéral, masseur-kinésithérapeute, architecte, mandataire agréé auprès des
+tribunaux de commerce, commissaire aux comptes, huissier de justice…) ne sont pas éligibles.
+
+Les entreprises du secteur numérique sont inéligibles. L’appréciation de l’activité numérique de l’entreprise
+se fera à la fois sur l’examen de son code APE (à partir de la liste définie en annexe) et sur son activité
+réelle (à partir de l’examen deson K-Bis et de toute pièce probante).
+
+Il ne devra avoir aucun lien juridique entre l’entreprise bénéficiaire de la subvention et le prestataire
+de services numérique (Exemple : le même dirigeant pour les deux entreprises ou un actionnaire commun).
+
+
+
+                                                          4/8
+                                      FEDER Réunion 2021-2027 - FA 1.2.5
+                                               Kap numérik
+
+
+Modalités de sélection :
+
+L’examen des demandes se fera par le biais d’une gestion au fil de l’eau, et cela au vu des projets portés
+essentiellement par des très petites entreprises. Ce mode de sélection permettra de conserver un dynamisme de
+ces structures en matière d’investissement et de créations d’emplois.
+
+Une gestion au fil de l'eau accompagnée de campagnes de promotion régulières sur ce dispositif apparaît ainsi
+plus pertinente que l'établissement d’appels à manifestations d'intérêt sur l'ensemble de la période de
+programmation.
+
+Les dossiers présentant une note supérieure ou égale à 12/20 (cf. exemple de grille de notation en annexe)
+seront retenus.
+
+
+9. PIECES CONSTITUTIVES DU DOSSIER ET OBLIGATIONS SPECIFIQUES DU
+DEMANDEUR
+
+La liste des pièces constitutives du dossier de demande de subvention devra être conforme à la liste des
+pièces du manuel de gestion 2021-2027 et devra comprendre notamment :
+- la lettre de demande et d’engagement du porteur confirmant la réalisation de l’opération dans les délais
+indiqués et de non-sollicitation d’autres financements publics sur l’opération que ceux figurant au plan de
+financement transmis ;
+- le formulaire de demande type ;
+- la note de présentation de l’opération ;
+- le calendrier prévisionnel de réalisation et l'échéancier prévisionnel ;
+- toutes les pièces justificatives citées dans la grille de notation.
+- tout document permettant d'apprécier la qualité du projet notamment au regard des critères de sélection et
+d'analyse mentionnés dans la présente fiche ;
+- grilles de marchés publics complétées (le cas échéant) ;
+
+
+10. MODALITES D'INSTRUCTION DES DEMANDES DE SUBVENTION
+
+     Type de sélection              Fil de l’eau                  AMI                   Appels à Projet
+      (case à cocher)                    X
+
+Dans le cadre d’une sélection « au fil de l’eau », le service analysera le dossier de demande de subvention sur
+la base du formulaire de demande d’aide accompagné des pièces annexes, et selon les critères décrits ci-dessus.
+
+
+11. SPECIFICITES DE LA FICHE ACTION
+Préfinancement assuré par la Région Réunion
+
+
+12. MODALITES TECHNIQUES ET FINANCIERES
+
+ Régime d’aide :
+                                                                                             X NON
+ Pour les TPE bénéficiaires : Règlement (UE) 1407/2013 de la commission du
+ 18/12/2013 relatif à l’application des articles 107 et 108 du traité sur le
+ fonctionnement de l’Union européenne aux aides de minimis, modifié par le
+ règlement 2020/972 de la commission du 2 juillet 2020
+ Préfinancement par le cofinanceur public :                                                 X    OUI
+
+                                                      5/8
+                                        FEDER Réunion 2021-2027 - FA 1.2.5
+                                                 Kap numérik
+
+
+
+
+         Taux de subvention : 80 %
+
+         Plafond éventuel des subventions publiques :
+
+Pour les entreprises de zéro à 9 salariés :
+
+La subvention globale attribuée est plafonnée à 3200 € (4000 euros de dépenses)
+Le montant de subvention sera plafonné en fonction des typologies d’actions présentées et évaluées à partir
+des devis reçus :
+- Création ou refonte d’un site Internet vitrine : 1 200 €
+- Création d’un site marchand : 2 000 €
+- Chat Bot : 2 000 €
+- Développement d’application mobile : 2 000 €
+- Prestation de développement de la présence sur les réseaux sociaux (community management) : 1 000 €
+- Accompagnement à la définition de la stratégie digitale : 500 €
+- Accompagnement à la digitalisation de contenus (crédits photos, web design, logo-charte graphique, …) :
+    2 000 €
+- Prestations de sécurité (audits de sécurité, paramétrage de serveurs, sécurisation des sites internet, sécuri-
+    sationde données, …) : 1 000 €
+- Abonnement à un marketplace 1 000 €
+
+Pour les entreprises de 10 à 19 salariés :
+
+La subvention globale attribuée est plafonnée à 2 000 € (2500 € de dépenses)
+Les dépenses seront plafonnées en fonction des typologies d’actions présentées etévaluées à partir des devis
+reçus :
+- Création ou refonte d’un site internet vitrine : 1 200€
+- Création d’un site marchand : 2 000 €
+- Chat Bot : 2 000 €
+- Développement d’application mobile : 2 000 €
+- Prestation de développement de la présence sur les réseaux sociaux (community management) : 1 000 €
+- Accompagnement à la définition de la stratégie digitale : 500 €
+- Accompagnement à la digitalisation de contenus (crédits photos, web design, logo-charte graphique, …)
+    : 2 000 €
+- Prestations de sécurité (audits de sécurité, paramétrage de serveurs, sécurisation des sites internet, sécu-
+    risationde données, …) : 1 000 €
+- Abonnement à un marketplace 1 000 €
+
+         Plan de financement de l'action :
+
+        Dépenses éligibles              FEDER                   CPN (Région)                Bénéficiaire
+             100 %                       68 %                        12 %                       20 %
+
+
+13. INFORMATIONS PRATIQUES :
+
+Lieu de dépôt des dossiers : par voie dématérialisée pour le pré financeur (portail régional des fonds européens
+FEDER – FSE +), par voie dématérialisée pour les bénéficiaires
+
+Où se renseigner ?
+Région Réunion - Direction de l’attractivité
+Hôtel de Région du Moufia, Saint-Denis
+www.regionreunion.com
+
+
+
+
+                                                         6/8
+                                        FEDER Réunion 2021-2027 - FA 1.2.5
+                                                 Kap numérik
+
+
+
+
+ANNEXE 1 : LISTE DES CODES APE DES ENTREPRISES RELEVANT DU SECTEUR
+NUMÉRIQUE ET INÉLIGIBLE A L’ACTION
+
+
+
+Edition de logiciels / Internet
+58.29A Edition de logiciels système et de réseau
+58.29B Edition de logiciels outils de développement et de langages
+58.29C Edition de logiciels applicatifs
+63.12Z Portails internet
+
+
+Infogérance
+62.01Z Programmation informatique
+62.02B Tierce maintenance de systèmes et d'applications informatiques
+62.03Z Gestion d'installations informatiques
+62.09Z Autres activités informatiques
+63.11Z Traitement de données, hébergement et activités connexes
+
+
+L’activité de l’entreprise est déterminée par l’examen de son chiffre d’affaires. C’est l’activité réelle
+de l’entreprise qui sera prise en compte, le code APE déclaré à l’INSEE étant considéré comme une
+indication.
+
+
+
+
+                                                       7/8
+                                          FEDER Réunion 2021-2027 - FA 1.2.5
+                                                   Kap numérik
+
+
+
+
+ANNEXE 2 : EXEMPLE DE GRILLE DE NOTATION
+
+Principe de                                                         Notation                  Justification
+sélection
+                      Taille de l’entreprise (au sens          - Entreprises ou          Statuts
+                      communautaire)                       associations de moins de      Extait SIRENE/Kbis
+                      Projets portés par des                    10 salariés : 3          Documents comptables
+                      entreprises de moins de 20                                         Déclaration PME
+                      salariés ou des associations de          - Entreprises dont
+                      moins de 10 salariés, inscrites        l’effectif est compris
+                      aux registres légaux                 entre 10 et 20 salariés : 1
+
+                                                                  - Autres : 0*
+                      Capacité financière du                         Oui : 4             Comptes de résultat des 3
+                      porteur de projet                             Non : 0*
+Qualité du                                                                               dernières années pour les
+porteur                                                                                  entreprises             en
+                                                                                         développement       (ayant
+                                                                                         plus      de      3    ans
+                                                                                         d’ancienneté)           ou
+                                                                                         prévisionnel d’activité
+                                                                                         pour les entreprises en
+                                                                                         création.
+                                                                                         Attestation de régularité
+                                                                                         sociale et fiscale
+
+                      Projets liés à la visibilité                   Oui : 5             Note     descriptive   du
+                      numérique de l’entreprise et                   Non : 0             projet
+                      aux services aux usagers
+
+Nature du projet      Projets liés à la sécurité                     Oui : 4
+                      informatique                                   Non : 0
+
+                      Premier projet déposé                          Oui : 2             Fichier AG
+                                                                     Non : 0
+                      Zone des Hauts (Limite                                             Bail commercial ou
+Localisation du       correspondant à la zone d’aire                       2             justificatif de propriété
+projet                d’adhésion optimale du Parc                                        du lieu de réalisation de
+                      National) ou de l’Est                                              l’opération
+TOTAL                                                                  /20
+
+0* : éliminatoire au regard des critères du PO ;
+Les projets présentant une note égale ou supérieure à 12 seront retenus.
+
+
+
+
+                                                           8/8

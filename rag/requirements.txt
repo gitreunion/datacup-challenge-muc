@@ -1,0 +1,7 @@
+haystack-ai
+datasets
+sentence-transformers
+faiss-cpu
+flask
+flask_cors
+requests
