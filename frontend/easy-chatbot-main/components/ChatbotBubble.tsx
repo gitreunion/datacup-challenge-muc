@@ -4,7 +4,7 @@ import './ChatbotBubble.css'; // Import the CSS file
 const ChatbotBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Bonjour :) Comment puis-je vous aider ?' },
+    { type: 'bot', text: 'Bonjour! Comment je peux vous aider?', sender: 'Mme Aude' },
   ]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +18,7 @@ const ChatbotBubble = () => {
     if (!userInput.trim()) return;
 
     const userMessage = userInput.trim();
-    setMessages(prevMessages => [...prevMessages, { type: 'user', text: userMessage }]);
+    setMessages(prevMessages => [...prevMessages, { type: 'user', text: userMessage, sender: 'Vous' }]);
     setUserInput('');
     setIsLoading(true);
 
@@ -35,10 +35,10 @@ const ChatbotBubble = () => {
         return response.json();
       })
       .then(data => {
-        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: data.reply }]);
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: data.reply, sender: 'Mme Aude' }]);
       })
       .catch(() => {
-        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Une erreur est survenue veuillez réessayer.' }]);
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Une erreur est survenue veuillez réessayer.', sender: 'Mme Aude' }]);
       })
       .finally(() => {
         setIsLoading(false);
@@ -59,11 +59,12 @@ const ChatbotBubble = () => {
 
   const renderMessages = () =>
     messages.map((message, index) => (
-      <div
-        key={index}
-        className={`message ${message.type === 'bot' ? 'bot-message' : 'user-message'}`}
-      >
-        {message.text}
+      <div key={index} className={`message ${message.type === 'bot' ? 'bot-message' : 'user-message'}`}>
+        <div className="sender">
+          {message.type === 'bot' && <img src="Aude.jpg" alt="Aude" className="sender-icon" />}
+          {message.sender}
+        </div>
+        <div className="message-text">{message.text}</div>
       </div>
     ));
 
