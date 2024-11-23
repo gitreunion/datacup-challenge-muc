@@ -28,7 +28,7 @@ En fonction de la branche actuelle, le modèle de l'IA change, voici leurs diff�
 ```
     - Dans la branche main et openai-api :
         - Une clé openai est nécessaire pour le fonctionnement
-    - Dans la branche mistal-api
+    - Dans la branche mistral-api
         - Une clé mistral est nécessaire pour le fonctionnement
     - Dans la branche local-mistral
         - Aucune clé n'est nécessaire pour le fonctionnement
