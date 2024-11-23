@@ -4,7 +4,7 @@ import './ChatbotBubble.css'; // Import the CSS file
 const ChatbotBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Bonjour! Comment je peux vous aider?', sender: 'Mme Odd' },
+    { type: 'bot', text: 'Bonjour! Comment je peux vous aider?', sender: 'Mme Aude' },
   ]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +60,10 @@ const ChatbotBubble = () => {
   const renderMessages = () =>
     messages.map((message, index) => (
       <div key={index} className={`message ${message.type === 'bot' ? 'bot-message' : 'user-message'}`}>
-        <div className="sender">{message.sender}</div>
+        <div className="sender">
+          {message.type === 'bot' && <img src="Aude.jpg" alt="Aude" className="sender-icon" />}
+          {message.sender}
+        </div>
         <div className="message-text">{message.text}</div>
       </div>
     ));
