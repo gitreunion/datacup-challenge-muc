@@ -8,14 +8,33 @@ const ChatbotBubble = () => {
   ]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [requestCount, setRequestCount] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('chatbotToken');
+    if (token) {
+      const expiryTime = JSON.parse(token).expiry;
+      const remainingTime = expiryTime - Date.now();
+      if (remainingTime > 0) {
+        setIsLocked(true);
+        setTimeout(() => {
+          localStorage.removeItem('chatbotToken');
+          setIsLocked(false);
+        }, remainingTime);
+      } else {
+        localStorage.removeItem('chatbotToken');
+      }
+    }
+  }, []);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
 
   const handleSendMessage = () => {
-    if (!userInput.trim()) return;
+    if (!userInput.trim() || isLocked) return;
 
     const userMessage = userInput.trim();
     setMessages(prevMessages => [...prevMessages, { type: 'user', text: userMessage, sender: 'Vous' }]);
@@ -42,6 +61,19 @@ const ChatbotBubble = () => {
       })
       .finally(() => {
         setIsLoading(false);
+        setRequestCount(prevCount => {
+          const newCount = prevCount + 1;
+          if (newCount >= 10) {
+            const expiryTime = Date.now() + 2 * 60 * 60 * 1000;
+            localStorage.setItem('chatbotToken', JSON.stringify({ expiry: expiryTime }));
+            setIsLocked(true);
+            setTimeout(() => {
+              localStorage.removeItem('chatbotToken');
+              setIsLocked(false);
+            }, 2 * 60 * 60 * 1000);
+          }
+          return newCount;
+        });
       });
   };
 
@@ -89,9 +121,9 @@ const ChatbotBubble = () => {
               onChange={e => setUserInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Entrez votre message..."
-              disabled={isLoading}
+              disabled={isLoading || isLocked}
             />
-            <button onClick={handleSendMessage} disabled={isLoading}>
+            <button onClick={handleSendMessage} disabled={isLoading || isLocked}>
               <img src="icon_chat.png" alt="Send" className="send-icon" />
             </button>
           </div>
