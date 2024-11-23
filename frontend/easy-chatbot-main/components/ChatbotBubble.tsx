@@ -23,7 +23,7 @@ const ChatbotBubble = () => {
     setIsLoading(true);
 
     // Simulate an API call
-    fetch('http://localhost:9001', {
+    fetch('http://localhost:9001/chat_completion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_message: userMessage }),
@@ -35,10 +35,10 @@ const ChatbotBubble = () => {
         return response.json();
       })
       .then(data => {
-        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: data.reply, sender: 'Mme Odd' }]);
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: data.reply, sender: 'Mme Aude' }]);
       })
       .catch(() => {
-        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Something went wrong.', sender: 'Mme Aude' }]);
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Une erreur est survenue veuillez réessayer.', sender: 'Mme Aude' }]);
       })
       .finally(() => {
         setIsLoading(false);
@@ -85,7 +85,7 @@ const ChatbotBubble = () => {
               value={userInput}
               onChange={e => setUserInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Tapez votre message..."
+              placeholder="Entrez votre message..."
               disabled={isLoading}
             />
             <button onClick={handleSendMessage} disabled={isLoading}>

@@ -1,15 +1,20 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from haystack.document_stores.in_memory import InMemoryDocumentStore
-from datasets import load_dataset
 from haystack import Document
 from haystack.components.embedders import SentenceTransformersTextEmbedder
 from haystack.components.retrievers.in_memory import InMemoryEmbeddingRetriever
 from haystack.components.builders import PromptBuilder
 import os
-from getpass import getpass
 from haystack.components.generators import OpenAIGenerator
 from haystack import Pipeline
 import glob
 from haystack.components.embedders import SentenceTransformersDocumentEmbedder
+import re
+import requests
+
+app = Flask(__name__)
+CORS(app)
 
 chat_history = []
 
@@ -20,9 +25,10 @@ def enrich_query_with_history(query, history):
     history_text = " ".join([f"Q: {q} A: {a}" for q, a in history])
     return f"{history_text} Nouvelle question: {query}"
 
-
+# Initialisation du DocumentStore
 document_store = InMemoryDocumentStore()
 
+# Charger les documents dans Vot le DocumentStore
 dataset_path = "dataset/*.txt"
 files = glob.glob(dataset_path)
 docs = []
@@ -30,7 +36,6 @@ for file in files:
     with open(file, 'r', encoding='utf-8') as f:
         content = f.read()
         docs.append(Document(content=content, meta={"source": file}))
-
 
 doc_embedder = SentenceTransformersDocumentEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 doc_embedder.warm_up()
@@ -40,7 +45,6 @@ document_store.write_documents(docs_with_embeddings["documents"])
 
 text_embedder = SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 retriever = InMemoryEmbeddingRetriever(document_store)
-
 
 template = """
 Given the following information, answer the question.
@@ -56,8 +60,7 @@ Answer:
 
 prompt_builder = PromptBuilder(template=template)
 
-if "OPENAI_API_KEY" not in os.environ:
-    os.environ["OPENAI_API_KEY"] = getpass("Enter OpenAI API key:")
+# Assuming the OPENAI_API_KEY is already set in the environment
 generator = OpenAIGenerator(model="gpt-4o-mini")
 
 basic_rag_pipeline = Pipeline()
@@ -67,18 +70,66 @@ basic_rag_pipeline.add_component("retriever", retriever)
 basic_rag_pipeline.add_component("prompt_builder", prompt_builder)
 basic_rag_pipeline.add_component("llm", generator)
 
-# Now, connect the components to each other
+# Connect the components
 basic_rag_pipeline.connect("text_embedder.embedding", "retriever.query_embedding")
 basic_rag_pipeline.connect("retriever", "prompt_builder.documents")
 basic_rag_pipeline.connect("prompt_builder", "llm")
 
-while True:
-    user_query = input("Votre question : ")
+@app.route('/chat_completion', methods=['POST'])
+def chat_completion():
+    data = request.json
+    user_query = data.get('user_message', '')
+    siret_info = None  # Initialize to ensure it's always defined
 
+    # Détection du numéro SIRET dans la requête utilisateur
+    regex = r"\b\d{14}\b"  # Correspond aux numéros SIRET de 14 chiffres
+    if re.search(regex, user_query):
+        siret_number = re.search(regex, user_query).group()
+        print(f"Numéro SIRET détecté : {siret_number}")
+        
+        # URL pour récupérer les informations sur l'entreprise
+        url = f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                siret_info = response.json()
+                if siret_info.get("total_count", 0) > 0:
+                    enterprise_info = siret_info["results"][0]
+                    # Récupération des données spécifiques
+                    siret = enterprise_info.get("siret", "Non disponible")
+                    date_creation = enterprise_info.get("datecreationetablissement", "Non disponible")
+                    address = f"{enterprise_info.get('numerovoieetablissement', '')} {enterprise_info.get('typevoieetablissement', '')} {enterprise_info.get('libellevoieetablissement', '')}".strip()
+                    city = enterprise_info.get("libellecommuneetablissement", "Non disponible")
+                    postal_code = enterprise_info.get("codepostaletablissement", "Non disponible")
+                    activity = enterprise_info.get("activiteprincipaleetablissement", "Non disponible")
+                    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "Non disponible")
+                    
+                    # Formatage des informations en français
+                    enterprise_details = (
+                        f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
+                        f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
+                        f"Elle a une tranche d'effectifs de '{employee_range}'."
+                    )
+                    user_query += f" Voici les informations sur cette entreprise : {enterprise_details}"
+                else:
+                    user_query += " Je n'ai trouvé aucune information sur ce numéro de SIRET."
+            else:
+                user_query += f" Erreur lors de la récupération des informations (statut {response.status_code})."
+        except requests.RequestException as e:
+            user_query += f" Une erreur est survenue lors de la connexion à l'API : {str(e)}."
+    else:
+        print("Aucun numéro SIRET détecté dans la requête utilisateur.")
+
+    # Enrichir la requête avec l'historique
     enriched_query = enrich_query_with_history(user_query, chat_history)
+    print(f"Enriched query: {enriched_query}")
 
+    # Exécuter le pipeline RAG
     response = basic_rag_pipeline.run({"text_embedder": {"text": enriched_query}, "prompt_builder": {"question": enriched_query}})
+    reply = response["llm"]["replies"][0]
+    chat_history.append((user_query, reply))
 
-    print(response["llm"]["replies"][0])
+    return jsonify({"reply": reply, "siret_info": siret_info})
 
-    chat_history.append((user_query, response["llm"]["replies"][0]))
+if __name__ == "__main__":
+    app.run(port=9001, debug=True)

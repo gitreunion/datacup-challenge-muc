@@ -1,5 +1,4 @@
-
-haystack
+haystack-ai
 datasets
 sentence-transformers
 faiss-cpu
