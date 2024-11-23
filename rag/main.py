@@ -28,7 +28,7 @@ def enrich_query_with_history(query, history):
 # Initialisation du DocumentStore
 document_store = InMemoryDocumentStore()
 
-# Charger les documents dans le DocumentStore
+# Charger les documents dans Vot le DocumentStore
 dataset_path = "dataset/*.txt"
 files = glob.glob(dataset_path)
 docs = []
