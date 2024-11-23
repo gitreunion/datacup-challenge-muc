@@ -5,7 +5,7 @@ La [Réunion DataCup Challenge](https://data.regionreunion.com/p/page-reunion-da
 L’objectif de cette seconde édition est de continuer à fédérer une communauté autour des données ouvertes du territoire ainsi qu'initier des projets pérennisables et utiles au plus grand nombre.
 
 
-## Nom de l'équipe
+## MUC
 
 Notre équipe a choisi de répondre au défi Agent conversationnel pour le Kap Numérik porté par La Région Reunion
 Ce défi s'inscrit dans un contexte de transformation numérique cruciale pour les petites entreprises. 
@@ -25,7 +25,11 @@ Notre solution répond au problème de l'accès complexe aux informations sur le
 
 ### **Utilisation**
 
->TODO / **documentation d'utilisation de la solution**
+Pour lancer le projet il faut éxécuter ces commandes :
+
+    - Le réseau neuronal: Aller dans le dossier `./rag` and éxécuter `python3 main.py`
+
+    - L'application web: Aller dans le dossier `frontend\easy-chatbot-main`, éxécuter 'npm install` et ensuite `npm run dev`
 
 ### **Contributions**
 
