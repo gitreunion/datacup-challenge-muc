@@ -5,10 +5,11 @@ from haystack import Document
 from haystack.components.embedders import SentenceTransformersTextEmbedder
 from haystack.components.retrievers.in_memory import InMemoryEmbeddingRetriever
 from haystack.components.builders import PromptBuilder
+import os
+from haystack.components.generators import OpenAIGenerator
 from haystack import Pipeline
-from haystack.components.embedders import SentenceTransformersDocumentEmbedder
-from haystack_integrations.components.generators.ollama import OllamaGenerator
 import glob
+from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 import re
 import requests
 
@@ -24,10 +25,10 @@ def enrich_query_with_history(query, history):
     history_text = " ".join([f"Q: {q} A: {a}" for q, a in history])
     return f"{history_text} Nouvelle question: {query}"
 
-# Initialize the DocumentStore
+# Initialisation du DocumentStore
 document_store = InMemoryDocumentStore()
 
-# Load the dataset
+# Charger les documents dans Vot le DocumentStore
 dataset_path = "dataset/*.txt"
 files = glob.glob(dataset_path)
 docs = []
@@ -36,20 +37,17 @@ for file in files:
         content = f.read()
         docs.append(Document(content=content, meta={"source": file}))
 
-# Embed documents
 doc_embedder = SentenceTransformersDocumentEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 doc_embedder.warm_up()
 
 docs_with_embeddings = doc_embedder.run(docs)
 document_store.write_documents(docs_with_embeddings["documents"])
 
-# Setup retriever and other components
 text_embedder = SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
 retriever = InMemoryEmbeddingRetriever(document_store)
 
-# Define the prompt template
 template = """
-Répond à la question simplement, soit concis dans tes phrases et utilise les informations suivantes.
+Given the following information, answer the question.
 
 Context:
 {% for document in documents %}
@@ -60,41 +58,36 @@ Question: {{question}}
 Answer:
 """
 
-# Setup prompt builder and generator
 prompt_builder = PromptBuilder(template=template)
 
-generator = OllamaGenerator(model="mistral",
-                            url="http://localhost:11434/",
-                            generation_kwargs={
-                              "num_predict": 500                              
-                            })
+# Assuming the OPENAI_API_KEY is already set in the environment
+generator = OpenAIGenerator(model="gpt-4o-mini")
 
-# Create the pipeline
 basic_rag_pipeline = Pipeline()
+# Add components to your pipeline
 basic_rag_pipeline.add_component("text_embedder", text_embedder)
 basic_rag_pipeline.add_component("retriever", retriever)
 basic_rag_pipeline.add_component("prompt_builder", prompt_builder)
 basic_rag_pipeline.add_component("llm", generator)
 
-# Connect components
+# Connect the components
 basic_rag_pipeline.connect("text_embedder.embedding", "retriever.query_embedding")
 basic_rag_pipeline.connect("retriever", "prompt_builder.documents")
 basic_rag_pipeline.connect("prompt_builder", "llm")
 
 @app.route('/chat_completion', methods=['POST'])
 def chat_completion():
-    """Handle user input and return response based on RAG pipeline."""
     data = request.json
     user_query = data.get('user_message', '')
     siret_info = None  # Initialize to ensure it's always defined
 
-    # Detect SIRET number in the user query
-    regex = r"\b\d{14}\b"
+    # Détection du numéro SIRET dans la requête utilisateur
+    regex = r"\b\d{14}\b"  # Correspond aux numéros SIRET de 14 chiffres
     if re.search(regex, user_query):
         siret_number = re.search(regex, user_query).group()
         print(f"Numéro SIRET détecté : {siret_number}")
         
-        # URL to fetch company information based on SIRET number
+        # URL pour récupérer les informations sur l'entreprise
         url = f"https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/base-sirene-v3-lareunion/records?where=siret='{siret_number}'&limit=1"
         try:
             response = requests.get(url)
@@ -102,25 +95,22 @@ def chat_completion():
                 siret_info = response.json()
                 if siret_info.get("total_count", 0) > 0:
                     enterprise_info = siret_info["results"][0]
-                    # Extract relevant data and replace None values with "Non spécifié"
-                    siret = enterprise_info.get("siret", "non spécifié")
-                    date_creation = enterprise_info.get("datecreationetablissement", "non spécifié")
-                    address = f"{enterprise_info.get('numerovoieetablissement', 'non spécifié')} {enterprise_info.get('typevoieetablissement', 'non spécifié')} {enterprise_info.get('libellevoieetablissement', 'non spécifié')}".strip()
-                    city = enterprise_info.get("libellecommuneetablissement", "non spécifié")
-                    postal_code = enterprise_info.get("codepostaletablissement", "non spécifié")
-                    activity = enterprise_info.get("activiteprincipaleetablissement", "non spécifié")
-                    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "non spécifié")
+                    # Récupération des données spécifiques
+                    siret = enterprise_info.get("siret", "Non disponible")
+                    date_creation = enterprise_info.get("datecreationetablissement", "Non disponible")
+                    address = f"{enterprise_info.get('numerovoieetablissement', '')} {enterprise_info.get('typevoieetablissement', '')} {enterprise_info.get('libellevoieetablissement', '')}".strip()
+                    city = enterprise_info.get("libellecommuneetablissement", "Non disponible")
+                    postal_code = enterprise_info.get("codepostaletablissement", "Non disponible")
+                    activity = enterprise_info.get("activiteprincipaleetablissement", "Non disponible")
+                    employee_range = enterprise_info.get("trancheeffectifsunitelegale", "Non disponible")
                     
-                    # Build the enterprise details string
+                    # Formatage des informations en français
                     enterprise_details = (
                         f"L'entreprise avec le SIRET {siret} a été créée le {date_creation}. Elle est située au "
                         f"{address}, {postal_code} {city}. Son activité principale est '{activity}'. "
                         f"Elle a une tranche d'effectifs de '{employee_range}'."
                     )
-                    
-                    # Append to user_query
                     user_query += f" Voici les informations sur cette entreprise : {enterprise_details}"
-
                 else:
                     user_query += " Je n'ai trouvé aucune information sur ce numéro de SIRET."
             else:
@@ -130,26 +120,16 @@ def chat_completion():
     else:
         print("Aucun numéro SIRET détecté dans la requête utilisateur.")
 
-    # Enrich the query with chat history
+    # Enrichir la requête avec l'historique
     enriched_query = enrich_query_with_history(user_query, chat_history)
     print(f"Enriched query: {enriched_query}")
 
-    # Run the RAG pipeline
-    response = basic_rag_pipeline.run({
-        "text_embedder": {"text": enriched_query},
-        "prompt_builder": {"question": enriched_query}
-    })
+    # Exécuter le pipeline RAG
+    response = basic_rag_pipeline.run({"text_embedder": {"text": enriched_query}, "prompt_builder": {"question": enriched_query}})
     reply = response["llm"]["replies"][0]
-    
-    # Add to chat history
     chat_history.append((user_query, reply))
 
     return jsonify({"reply": reply, "siret_info": siret_info})
-
-@app.route('/history', methods=['GET'])
-def get_chat_history():
-    """Return the chat history."""
-    return jsonify({"history": chat_history})
 
 if __name__ == "__main__":
     app.run(port=9001, debug=True)
