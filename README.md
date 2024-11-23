@@ -7,15 +7,17 @@ L’objectif de cette seconde édition est de continuer à fédérer une communa
 
 ## Nom de l'équipe
 
-Notre équipe a choisi de répondre au défi ... porté par ....
-Ce défi s'inscrit ... (rappeler le contexte).
-Il a pour objectif de ... (rappeler l'objectif).
-
+Notre équipe a choisi de répondre au défi Agent conversationnel pour le Kap Numérik porté par La Région Reunion
+Ce défi s'inscrit dans un contexte de transformation numérique cruciale pour les petites entreprises. 
+Le dispositif Kap Numérik vise à les accompagner, à l'aide de la création d’un agent conversationnel
+Il a pour objectif de simplifier l’accès aux informations et d’optimiser l’assistance, répondant ainsi à des besoins croissants de réactivité et d’accessibilité..
 
 
 ## **Documentation**
 
-Notre solution répond au problème ... . Elle consiste à ... . Cette solution s'adresse à ... .
+Notre solution répond au problème de l'accès complexe aux informations sur le dispositif Kap Numérik et au besoin d’assistance rapide pour les petites entreprises.
+ Elle consiste à mettre en place un agent conversationnel capable de vérifier l'éligibilité des entreprises et de répondre aux questions générales sur le dispositif.
+  Cette solution s'adresse aux petites entreprises souhaitant bénéficier de Kap Numérik et nécessitant une aide numérique simplifiée et accessible.
 
 ### **Installation**
 
