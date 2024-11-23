@@ -80,6 +80,16 @@
   white-space: pre-wrap;
 }
 
+.sender {
+  font-size: 0.75rem;
+  color: #021f57;
+  margin-bottom: 4px;
+}
+
+.message-text {
+  font-size: 1rem;
+}
+
 .bot-message {
   background-color: #00b2a9;
   color: #fff;

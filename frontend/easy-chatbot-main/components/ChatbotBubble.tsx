@@ -4,7 +4,7 @@ import './ChatbotBubble.css'; // Import the CSS file
 const ChatbotBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Hi! How can I help you?' },
+    { type: 'bot', text: 'Bonjour! Comment je peux vous aider?', sender: 'Mme Odd' },
   ]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +18,7 @@ const ChatbotBubble = () => {
     if (!userInput.trim()) return;
 
     const userMessage = userInput.trim();
-    setMessages(prevMessages => [...prevMessages, { type: 'user', text: userMessage }]);
+    setMessages(prevMessages => [...prevMessages, { type: 'user', text: userMessage, sender: 'Vous' }]);
     setUserInput('');
     setIsLoading(true);
 
@@ -35,10 +35,10 @@ const ChatbotBubble = () => {
         return response.json();
       })
       .then(data => {
-        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: data.reply }]);
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: data.reply, sender: 'Mme Odd' }]);
       })
       .catch(() => {
-        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Something went wrong.' }]);
+        setMessages(prevMessages => [...prevMessages, { type: 'bot', text: 'Something went wrong.', sender: 'Mme Aude' }]);
       })
       .finally(() => {
         setIsLoading(false);
@@ -59,11 +59,9 @@ const ChatbotBubble = () => {
 
   const renderMessages = () =>
     messages.map((message, index) => (
-      <div
-        key={index}
-        className={`message ${message.type === 'bot' ? 'bot-message' : 'user-message'}`}
-      >
-        {message.text}
+      <div key={index} className={`message ${message.type === 'bot' ? 'bot-message' : 'user-message'}`}>
+        <div className="sender">{message.sender}</div>
+        <div className="message-text">{message.text}</div>
       </div>
     ));
 
@@ -87,7 +85,7 @@ const ChatbotBubble = () => {
               value={userInput}
               onChange={e => setUserInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder="Tapez votre message..."
               disabled={isLoading}
             />
             <button onClick={handleSendMessage} disabled={isLoading}>
